@@ -1,11 +1,10 @@
-import logging
 import random
 import requests
 import datetime
 import hashlib
 
-from flask import Flask, request, render_template, jsonify, Response
-from jikan4snek import Jikan4SNEK, dump
+from flask import Flask, request, render_template, jsonify
+from jikan4snek import Jikan4SNEK
 from bs4 import BeautifulSoup
 from pathlib import Path
 
