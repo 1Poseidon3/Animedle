@@ -40,15 +40,17 @@
     <p>{{Seed}}</p>
     <p>Winner?: </p>
     <p id="winner">Game Started</p>
-    <div class="container">
-        <div class="box header-box">Rank/Score</div>
-        <div class="box header-box">Popularity/ Members</div>
-        <div class="box header-box">Air Year & Season</div>
-        <div class="box header-box">Genre(s)</div>
-        <div class="box header-box">Studio(s)</div>
-        <div class="box header-box">Theme(s)</div>
-        <div class="box header-box">Rating</div>
-        <div class="box header-box">Source</div>
+    <div id="box_container">
+        <div class="container">
+            <div class="box header-box">Rank/Score</div>
+            <div class="box header-box">Popularity/ Members</div>
+            <div class="box header-box">Air Year & Season</div>
+            <div class="box header-box">Studio(s)</div>
+            <div class="box header-box">Genre(s)</div>
+            <div class="box header-box">Theme(s)</div>
+            <div class="box header-box">Rating</div>
+            <div class="box header-box">Source</div>
+        </div>
     </div>
 
     <form>
@@ -91,13 +93,23 @@
                 type: 'POST',
                 data: {dropdown: dropdown},
                 success: function(data) {
-                    //alert(data);
                     $('#winner').text(data.message);
+                    $.ajax({
+                        url: '/append_boxes',
+                        type: 'GET',
+                        success: function(box_data) {
+                            $('#box_container').append(box_data.info_boxes);
+                        },
+                        error: function(error) {
+                            console.log(error);
+                        }
+                    });
                 },
                 error: function(error) {
                     console.log(error);
                 }
             });
+            $.getJSON()
         }
     </script>
 </body>

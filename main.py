@@ -13,6 +13,7 @@ app = Flask(__name__)
 anime_list = []
 global_anime_id_chosen = 0
 global_anime_title_chosen = ""
+global_info_boxes_data = ""
 
 # Main page
 @app.route('/')
@@ -66,13 +67,38 @@ def get_dropdown_options():
 # Runs when the user submits an answer
 @app.route('/submit', methods=['POST'])
 async def submit():
+    global global_info_boxes_data
     jikan = Jikan4SNEK()
     chosen = request.form.get('dropdown')
-    answer_data = await jikan.search(chosen).anime()
+    answer_data = await jikan.search(chosen, limit=1).anime()
+    answer_rank = answer_data['data'][0]['rank']
+    answer_score = answer_data['data'][0]['score']
+    answer_popularity = answer_data['data'][0]['popularity']
+    answer_members = answer_data['data'][0]['members']
+    answer_year = answer_data['data'][0]['aired']['prop']['from']['year']
+    answer_season = answer_data['data'][0]['season']
+    answer_studios = []
+    for studio in answer_data['data'][0]['studios']:
+        answer_studios.append(studio['name'])
+    answer_genres = []
+    for genre in answer_data['data'][0]['genres']:
+        answer_genres.append(genre['name'])
+    answer_themes = []
+    for theme in answer_data['data'][0]['themes']:
+        answer_themes.append(theme['name'])
+    answer_rating = answer_data['data'][0]['rating']
+    answer_source = answer_data['data'][0]['source']
+    global_info_boxes_data = render_template('addBoxesOnAnswer.html', answer_data=answer_data, answer_rank=answer_rank, answer_score=answer_score, answer_popularity=answer_popularity, answer_members=answer_members, answer_year=answer_year, answer_season=answer_season, answer_studios=answer_studios, answer_genres=answer_genres, answer_themes=answer_themes, answer_rating=answer_rating, answer_source=answer_source)
     if chosen.lower() == global_anime_title_chosen.lower():
-        return jsonify(message="Yes!", won=True)
+        return jsonify(message="Yes!")
     else:
-        return jsonify(message="Not yet...", won=False)
+        return jsonify(message="Not yet...")
+
+
+@app.route('/append_boxes', methods=['GET'])
+def append_boxes():
+    global global_info_boxes_data
+    return jsonify(info_boxes=global_info_boxes_data)
 
 
 # Runs when we need to scrap the IDs of the top 1000 anime. This # is hard coded but can be changed in the future
